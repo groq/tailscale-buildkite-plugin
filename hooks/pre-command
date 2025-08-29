@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -euo pipefail
+
+client_secret="${!BUILDKITE_PLUGIN_TAILSCALE_CLIENT_SECRET_ENV?"Client secret env must be set"}"
+tags="${BUILDKITE_PLUGIN_TAILSCALE_TAGS?"Tags must be set"}"
+
+hostname="${BUILDKITE_PLUGIN_TAILSCALE_HOSTNAME:-buildkite-${BUILDKITE_AGENT_NAME:-$(hostname)}}"
+timeout="${BUILDKITE_PLUGIN_TAILSCALE_TIMEOUT:-120}"
+
+sudo -bE nohup tailscaled --state=mem: &
+
+echo "~~~ Waiting for Tailscale daemon to start..."
+timeout "$timeout" /bin/bash -c "until sudo -E tailscale status --json >/dev/null 2>&1; do sleep 1; done"
+echo "✅ Tailscale daemon started successfully"
+
+echo "🌐 Connecting to Tailscale network..."
+authkey="${client_secret}?preauthorized=true&ephemeral=true"
+sudo -E tailscale up \
+  --authkey="$authkey" \
+  --hostname="$hostname" \
+  --advertise-tags="$tags" \
+  --accept-routes \
+  --timeout "${timeout}s"
+
+echo "✅ Successfully connected to Tailscale!"
+
+echo "📊 Connection status:"
+sudo -E tailscale status
