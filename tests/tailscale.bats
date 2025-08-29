@@ -2,7 +2,8 @@
 
 load "${BATS_PLUGIN_PATH}/load.bash"
 
-# export SUDO_STUB_DEBUG=/dev/tty
+# export NOHUP_STUB_DEBUG=/dev/tty
+# export TAILSCALE_STUB_DEBUG=/dev/tty
 
 setup() {
   export TAILSCALE_CLIENT_ID=client-id
@@ -13,11 +14,13 @@ setup() {
   export BUILDKITE_PLUGIN_TAILSCALE_CLIENT_SECRET_ENV=TAILSCALE_CLIENT_SECRET
   export BUILDKITE_PLUGIN_TAILSCALE_TAGS=tags:ci
 
-  stub sudo \
-    "-b /bin/bash -c 'nohup tailscaled --state=mem: > /var/log/tailscaled.log &' : exit 0" \
-    "tailscale status --json : exit 0" \
-    "tailscale up --authkey=client-secret?preauthorized=true\\&ephemeral=true --hostname=buildkite-$(hostname) --advertise-tags=tags:ci --accept-routes --timeout 120s : exit 0" \
-    "tailscale status : exit 0"
+  stub nohup \
+    "tailscaled --state=mem: : exit 0"
+
+  stub tailscale \
+    "status --json : exit 0" \
+    "up --authkey=client-secret?preauthorized=true\\&ephemeral=true --hostname=buildkite-$(hostname) --advertise-tags=tags:ci --accept-routes --timeout 120s : exit 0" \
+    "status : exit 0"
 
   run bash -c "$PWD/hooks/pre-command"
 
@@ -27,5 +30,6 @@ setup() {
   assert_output --partial '✅ Tailscale daemon started successfully'
   assert_output --partial '✅ Successfully connected to Tailscale!'
 
-  unstub sudo
+  unstub nohup
+  unstub tailscale
 }
