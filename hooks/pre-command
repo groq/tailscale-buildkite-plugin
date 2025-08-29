@@ -8,15 +8,15 @@ tags="${BUILDKITE_PLUGIN_TAILSCALE_TAGS?"Tags must be set"}"
 hostname="${BUILDKITE_PLUGIN_TAILSCALE_HOSTNAME:-buildkite-${BUILDKITE_AGENT_NAME:-$(hostname)}}"
 timeout="${BUILDKITE_PLUGIN_TAILSCALE_TIMEOUT:-120}"
 
-sudo -bE nohup tailscaled --state=mem: &
+sudo -b /bin/bash -c 'nohup tailscaled --state=mem: > /var/log/tailscaled.log &'
 
 echo "~~~ Waiting for Tailscale daemon to start..."
-timeout "$timeout" /bin/bash -c "until sudo -E tailscale status --json >/dev/null 2>&1; do sleep 1; done"
+timeout "$timeout" /bin/bash -c "until sudo tailscale status --json >/dev/null 2>&1; do sleep 1; done"
 echo "✅ Tailscale daemon started successfully"
 
 echo "🌐 Connecting to Tailscale network..."
 authkey="${client_secret}?preauthorized=true&ephemeral=true"
-sudo -E tailscale up \
+sudo tailscale up \
   --authkey="$authkey" \
   --hostname="$hostname" \
   --advertise-tags="$tags" \
@@ -26,4 +26,4 @@ sudo -E tailscale up \
 echo "✅ Successfully connected to Tailscale!"
 
 echo "📊 Connection status:"
-sudo -E tailscale status
+sudo tailscale status

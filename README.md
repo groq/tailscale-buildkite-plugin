@@ -8,10 +8,6 @@ These are all the options available to configure this plugin's behaviour.
 
 ### Required
 
-#### `client-id-env` (string)
-
-The environment variable that the client ID is stored in.
-
 #### `client-secret-env` (string)
 
 The environment variable that the client secret is stored in.
@@ -36,15 +32,15 @@ Defaults to `120`.
 
 ## Examples
 
-Show how your plugin is to be used
-
 ```yaml
 steps:
-  - label: "🔨 Running plugin"
-    command: "echo template plugin"
+  - label: "🔨 Access my-service on the Tailnet"
+    command: "curl http://my-service:8080"
     plugins:
-      - tailscale#v1.0.0:
-          mandatory: "value"
+    - steved/tailscale:
+        # Export this value as part of the repo's hooks/pre-checkout
+        client-secret-env: TAILSCALE_OAUTH_CLIENT_SECRET
+        tags: tag:ci
 ```
 
 ## 📜 License

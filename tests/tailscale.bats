@@ -14,10 +14,10 @@ setup() {
   export BUILDKITE_PLUGIN_TAILSCALE_TAGS=tags:ci
 
   stub sudo \
-    "-bE nohup tailscaled --state=mem: : exit 0" \
-    "-E tailscale status --json : exit 0" \
-    "-E tailscale up --authkey=client-secret?preauthorized=true\\&ephemeral=true --hostname=buildkite-$(hostname) --advertise-tags=tags:ci --accept-routes --timeout 120s : exit 0" \
-    "-E tailscale status : exit 0"
+    "-b /bin/bash -c 'nohup tailscaled --state=mem: > /var/log/tailscaled.log &' : exit 0" \
+    "tailscale status --json : exit 0" \
+    "tailscale up --authkey=client-secret?preauthorized=true\\&ephemeral=true --hostname=buildkite-$(hostname) --advertise-tags=tags:ci --accept-routes --timeout 120s : exit 0" \
+    "tailscale status : exit 0"
 
   run bash -c "$PWD/hooks/pre-command"
 
