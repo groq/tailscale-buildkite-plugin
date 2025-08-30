@@ -8,7 +8,7 @@ tags="${BUILDKITE_PLUGIN_TAILSCALE_TAGS?"Tags must be set"}"
 hostname="${BUILDKITE_PLUGIN_TAILSCALE_HOSTNAME:-buildkite-${BUILDKITE_AGENT_NAME:-$(hostname)}}"
 timeout="${BUILDKITE_PLUGIN_TAILSCALE_TIMEOUT:-120}"
 
-nohup tailscaled --state=mem: > /var/log/tailscaled.log &
+nohup tailscaled --state=mem: < /dev/null > /var/log/tailscaled.log 2> /var/log/tailscaled.err.log &
 
 echo "~~~ Waiting for Tailscale daemon to start..."
 timeout "$timeout" /bin/bash -c "until tailscale status --json >/dev/null 2>&1; do sleep 1; done"
