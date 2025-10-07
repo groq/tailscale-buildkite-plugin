@@ -1,0 +1,26 @@
+name: Tailscale
+description: Connect to your [Tailscale](https://tailscale.com/) network.
+author: https://github.com/steved
+requirements:
+  - bash
+  - tailscale
+  - tailscaled
+configuration:
+  properties:
+    client-secret-env:
+      type: string
+      description: "The environment variable that the OAuth client secret is stored in."
+    tags:
+      type: string
+      description: "The device tags this pipeline will use."
+    hostname:
+      type: string
+      description: "The hostname to use."
+    timeout:
+      type: number
+      description: "Connection timeout value in seconds."
+  required:
+    - client-id-env
+    - client-secret-env
+    - tags
+  additionalProperties: false
