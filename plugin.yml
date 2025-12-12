@@ -7,9 +7,15 @@ requirements:
   - tailscaled
 configuration:
   properties:
+    client-id:
+      type: string
+      description: "Client ID. When no client-secret-env is supplied, defaults to using workload identity federation."
     client-secret-env:
       type: string
       description: "The environment variable that the OAuth client secret is stored in."
+    audience:
+      type: string
+      description: "OIDC token audience. Defaults to: tailscale.com."
     tags:
       type: string
       description: "The device tags this pipeline will use."
@@ -20,7 +26,5 @@ configuration:
       type: number
       description: "Connection timeout value in seconds."
   required:
-    - client-id-env
-    - client-secret-env
     - tags
   additionalProperties: false

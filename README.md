@@ -8,15 +8,23 @@ These are all the options available to configure this plugin's behaviour.
 
 ### Required
 
-#### `client-secret-env` (string)
-
-The environment variable that the client secret is stored in.
-
 #### `tags` (string)
 
 The [device tags](https://tailscale.com/kb/1068/tags) this pipeline will use.
 
 ### Optional
+
+#### `client-id` (string)
+
+The client ID. When set and no `client-secret-env` is supplied, [workload identity federation](https://tailscale.com/blog/workload-identity-beta) is used.
+
+#### `client-secret-env` (string)
+
+The environment variable that the client secret is stored in.
+
+#### `audience` (string)
+
+The OIDC token audience. Defaults to `tailscale.com`.
 
 #### `hostname` (string)
 
