@@ -1,6 +1,7 @@
 {
-  "extends": [
-    "config:base",
-    ":disableDependencyDashboard"
-  ]
+    "extends": [
+        "config:base",
+        ":disableDependencyDashboard"
+    ],
+    "minimumReleaseAge": "1 day"
 }
